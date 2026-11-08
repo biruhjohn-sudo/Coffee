@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Ratio Calculator — Exact Grams for French Press, Pour Over & More</title>
+    <meta name="description" content="Free coffee ratio calculator. Enter your water amount and brewing method, get the exact grams of coffee you need. Works for French press, pour over, AeroPress, and drip.">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #faf8f5;
+            color: #2c2c2c;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container { max-width: 640px; margin: 40px auto; }
+        h1 { font-size: 1.75rem; margin-bottom: 8px; color: #1a1a1a; }
+        .subtitle { color: #666; margin-bottom: 28px; font-size: 1rem; }
+        .card {
+            background: #fff;
+            border: 1px solid #e8e4df;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+        .hint { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d4cfc8;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        input:focus, select:focus { outline: 2px solid #b07d4a; border-color: transparent; }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #b07d4a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #96683c; }
+        #result { display: none; margin-top: 24px; }
+        .result-main {
+            background: #f0ebe5;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .result-main .grams { font-size: 2.5rem; font-weight: 700; color: #8b5e2f; }
+        .result-main .label { font-size: 0.9rem; color: #666; }
+        .result-detail { font-size: 0.95rem; color: #444; margin-top: 12px; }
+        .result-detail strong { color: #2c2c2c; }
+        .footer { font-size: 0.8rem; color: #999; margin-top: 32px; text-align: center; }
+        .method-note { font-size: 0.85rem; color: #777; margin-top: 10px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Coffee Ratio Calculator</h1>
+    <p class="subtitle">Enter your water amount and brewing method. Get the exact grams of coffee you need.</p>
+
+    <div class="card">
+        <label for="water">Water amount (grams or ml)</label>
+        <p class="hint">1 ml of water = 1 gram. Most mugs hold 250–350g.</p>
+        <input type="number" id="water" value="250" min="50" max="2000" step="1">
+
+        <label for="method">Brewing method</label>
+        <select id="method">
+            <option value="1:15">French Press — strong (1:15)</option>
+            <option value="1:16" selected>Pour Over — balanced (1:16)</option>
+            <option value="1:17">AeroPress — bright (1:17)</option>
+            <option value="1:18">Drip Machine — mild (1:18)</option>
+        </select>
+
+        <button onclick="calculate()">Calculate Coffee Amount</button>
+
+        <div id="result">
+            <div class="result-main">
+                <div class="grams" id="grams">--</div>
+                <div class="label">grams of coffee</div>
+            </div>
+            <div class="result-detail" id="detail"></div>
+            <div class="method-note" id="methodNote"></div>
+        </div>
+    </div>
+
+    <p class="footer">
+        Coffee ratio = coffee weight : water weight. A 1:16 ratio means 1 part coffee to 16 parts water.<br>
+        This tool is for reference only. Adjust to your taste.
+    </p>
+</div>
+
+<script>
+    const methodNotes = {
+        "1:15": "French press: coarser grind, 4-minute steep. Strong and full-bodied.",
+        "1:16": "Pour over: medium grind, 2–3 minute brew. Balanced and clear.",
+        "1:17": "AeroPress: fine-medium grind, 1–2 minute steep. Bright and concentrated.",
+        "1:18": "Drip machine: medium grind, automatic brew. Mild and easy-drinking."
+    };
+
+    function calculate() {
+        const water = parseFloat(document.getElementById('water').value);
+        const ratioStr = document.getElementById('method').value;
+        const ratio = parseFloat(ratioStr.split(':')[1]);
+
+        const resultDiv = document.getElementById('result');
+        const gramsEl = document.getElementById('grams');
+        const detailEl = document.getElementById('detail');
+        const methodNoteEl = document.getElementById('methodNote');
+
+        if (isNaN(water) || water < 50 || water > 2000) {
+            resultDiv.style.display = 'block';
+            gramsEl.textContent = '--';
+            detailEl.innerHTML = '<strong>Please enter a water amount between 50 and 2000 grams.</strong>';
+            methodNoteEl.textContent = '';
+            return;
+        }
+
+        const coffee = water / ratio;
+        const rounded = Math.round(coffee * 10) / 10;
+
+        resultDiv.style.display = 'block';
+        gramsEl.textContent = rounded + ' g';
+        detailEl.innerHTML = `For <strong>${water} g</strong> of water at a <strong>${ratioStr}</strong> ratio, use <strong>${rounded} g</strong> of coffee.`;
+        methodNoteEl.textContent = methodNotes[ratioStr] || '';
+    }
+
+    // Auto-calculate on page load
+    calculate();
+</script>
+
+</body>
+</html>
